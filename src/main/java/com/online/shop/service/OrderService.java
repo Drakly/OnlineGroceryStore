@@ -33,12 +33,10 @@ public class OrderService {
     }
 
     public OrderResponseDto processOrder(User user, OrderRequestDto orderRequest) {
-        // Validate and get products
         Map<String, Integer> requestedItems = orderRequest.getItems();
         List<String> productNames = new ArrayList<>(requestedItems.keySet());
         List<Product> products = productRepository.findByNameIn(productNames);
 
-        // Check if all requested products exist
         Set<String> foundProductNames = products.stream()
             .map(Product::getName)
             .collect(Collectors.toSet());
@@ -51,7 +49,6 @@ public class OrderService {
             return createFailedOrderResponse(null, "Products not found: " + String.join(", ", missingProducts), missingProducts);
         }
 
-        // Check stock availability
         List<String> insufficientStockItems = new ArrayList<>();
         Map<Product, Integer> productsToCollect = new HashMap<>();
 
@@ -71,29 +68,23 @@ public class OrderService {
                 insufficientStockItems);
         }
 
-        // Create order
         Order order = new Order(user, Order.OrderStatus.SUCCESS);
         order = orderRepository.save(order);
 
-        // Create order items and reduce stock
         for (Map.Entry<Product, Integer> entry : productsToCollect.entrySet()) {
             Product product = entry.getKey();
             Integer quantity = entry.getValue();
 
-            // Create order item
             OrderItem orderItem = new OrderItem(order, product, quantity);
             order.addOrderItem(orderItem);
 
-            // Reduce product stock
             product.reduceQuantity(quantity);
             productRepository.save(product);
         }
 
-        // Calculate and save route
         List<List<Integer>> route = botRouteCalculator.calculateOptimalRoute(productsToCollect);
         saveRouteSteps(order, route);
 
-        // Create successful response
         OrderResponseDto response = new OrderResponseDto(order.getId(), order.getStatus(), order.getCreatedAt());
         response.setVisitedLocations(route);
         response.setMessage("Order SUCCESS");

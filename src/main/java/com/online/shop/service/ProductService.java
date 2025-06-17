@@ -41,7 +41,6 @@ public class ProductService {
         Product existingProduct = productRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + id));
 
-        // Check if coordinates are being changed and if they conflict with another product
         if (!existingProduct.getX().equals(productDto.getX()) || !existingProduct.getY().equals(productDto.getY())) {
             Optional<Product> productAtLocation = productRepository.findByXAndY(productDto.getX(), productDto.getY());
             if (productAtLocation.isPresent() && !productAtLocation.get().getId().equals(id)) {
