@@ -233,17 +233,6 @@ The bot uses a **greedy nearest-neighbor algorithm** with Manhattan distance:
 
 ---
 
-## 🎯 Future Enhancements
-
-- 📦 Pagination and filtering in product list
-- 📜 Order history for logged-in users
-- 📈 Export route data (CSV or PDF)
-- 🛡️ Admin role with extra permissions
-- 📊 Dashboard with analytics and insights
-- 🗺️ Visual warehouse grid representation
-- 📱 Mobile app integration
-- 🔔 Real-time notifications
-
 ---
 
 ## 📝 License

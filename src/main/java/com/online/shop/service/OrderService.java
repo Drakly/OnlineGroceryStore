@@ -136,16 +136,5 @@ public class OrderService {
         return response;
     }
 
-    @Transactional(readOnly = true)
-    public List<Order> getUserOrders(User user) {
-        return orderRepository.findByUserOrderByCreatedAtDesc(user);
-    }
 
-    @Transactional(readOnly = true)
-    public List<List<Integer>> getOrderRoute(UUID orderId) {
-        List<RouteStep> routeSteps = routeStepRepository.findByOrderIdOrderByStepIndexAsc(orderId);
-        return routeSteps.stream()
-            .map(step -> Arrays.asList(step.getX(), step.getY()))
-            .collect(Collectors.toList());
-    }
 } 
